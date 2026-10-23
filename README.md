@@ -4,7 +4,7 @@ This repository provides example Nix code that allows you to:
 
 - Build *reproducible* operating system images for your robot: NixOS bundled with ROS packages of your choice, as well as any custom infrastructure you might need.
 - Remotely deploy and incrementally update these NixOS images to your robot over SSH, with automatic rollback to the last working version if anything fails.
-- Enter a Nix development shell on your local workstation, allowing you to run ROS on non-NixOS hosts (e.g. Ubuntu)
+- Enter a Nix development shell on your local workstation, allowing you to run ROS on non-NixOS hosts (e.g. Ubuntu).
 
 You can also build a custom NixOS image that runs on your local workstation in a QEMU virtual machine, for testing/experimentation without access to robot hardware.
 
@@ -19,7 +19,7 @@ The following instructions assume that you have installed Nix on an `x86` host m
 
 To enable the 'experimental' `nix` command and Nix flakes, add the following to `/etc/nix/nix.conf`. Alternatively, pass `--extra-experimental-features "nix-command flakes"` to Nix commands.
 
-```
+```nix
 experimental-features = nix-command flakes
 ```
 Register yourself as a trusted user by running the following command. Alternatively, pass `--accept-flake-config` to Nix commands. If you don't do this, Nix will ignore the binary cache settings in the flake, causing everything to be built from source instead.
@@ -33,7 +33,7 @@ $ sudo apt install binfmt-support qemu-user-static
 ```
 Then add the following lines to `/etc/nix/nix.conf`: 
 
-```
+```nix
 extra-platforms = aarch64-linux
 extra-sandbox-paths = /usr/bin/qemu-aarch64-static
 ```
@@ -96,7 +96,7 @@ If you want to start again from scratch, you can redeploy via `nixos-anywhere` t
 
 ## Development shell
 
-To you open a development shell on your local machine by running one of the following commands:
+To open a development shell on your local machine, run one of the following commands:
 ```sh
 # Default shell: ROS 2 + the "base" profile (rviz2, rqt, colcon)
 $ nix develop
@@ -108,7 +108,9 @@ The packages installed in the development shell will match the versions installe
 
 ### GPU drivers on non-NixOS hosts
 
-Programs built by Nix (such as `rviz2`) cannot see your distribution's GPU drivers. `modules/workstation/` provides a `system-manager` configuration that installs matching userspace drivers.
+Graphical programs built by Nix (such as `rviz2`) cannot see your host operating system’s GPU drivers.
+
+`modules/workstation/` provides a `system-manager` configuration that installs matching userspace drivers.
 
 Run the following command to install Mesa drivers:
 ```sh
@@ -125,7 +127,7 @@ $ nix hash convert --hash-algo sha256 --to sri <output-of-previous-command>
 ```
 Then add your workstation to `modules/workstation/workstations.nix`:
 ```nix
-my-laptop = {
+my-workstation = {
   version = "<driver version>"; # Must match the kernel driver exactly
   sha256_64bit = "sha256-...";  # Hash of the NVIDIA .run installer
 };
@@ -144,7 +146,7 @@ You can run your custom NixOS image in a local virtual machine. Two example virt
 The VM connects to the host through a bridge named `br0`. The VM definition hard-codes the guest network: IP `192.168.100.2/24`, a multicast route for ROS discovery, and QEMU's bridge helper at `/usr/lib/qemu/qemu-bridge-helper`. To configure your host to support this configuration, run the following commands:
 
 ```sh
-# QEMU's bridge helper (Ubuntu package) and KVM acceleration
+# QEMU's bridge helper and KVM acceleration
 sudo apt install qemu-system-x86 qemu-system-common
 sudo usermod -aG kvm "$USER"            # Log out and in again afterwards
 ls -l /usr/lib/qemu/qemu-bridge-helper  # Should be setuid root (-rws...)
