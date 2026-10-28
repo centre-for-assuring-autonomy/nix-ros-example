@@ -55,4 +55,11 @@ in
       system: deployLib: deployLib.deployChecks (inputs.self.deploy // { nodes = nodesFor system; })
     ) (lib.filterAttrs (system: _: nodesFor system != { }) deploy-rs.lib);
   };
+
+  # `nix run .#deploy-rs` uses the nixpkgs build of the CLI pinned by flake.lock
+  config.perSystem =
+    { system, ... }:
+    {
+      packages.deploy-rs = nixpkgs.legacyPackages.${system}.deploy-rs;
+    };
 }

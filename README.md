@@ -83,7 +83,7 @@ $ nix run github:nix-community/nixos-anywhere -- \
 
 After making changes to the NixOS configuration on your local machine (e.g. adding more ROS packages), you can iteratively deploy these changes over SSH via [`deploy-rs`](https://github.com/serokell/deploy-rs):
 ```sh
-$ nix run nixpkgs#deploy-rs -- .#turtlebot3-01
+$ nix run .#deploy-rs -- .#turtlebot3-01
 ```
 
 If you SSH into NixOS running on the robot, you can run the following command to display the history of system generations:
