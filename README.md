@@ -130,22 +130,29 @@ $ nix run 'github:numtide/system-manager' -- switch --sudo --flake .#mesa
 ```
 
 If you have an NVIDIA GPU, first find your driver version:
+
 ```sh
 $ cat /proc/driver/nvidia/version
 ```
+
 Obtain the driver installer hash by running:
+
 ```sh
 $ nix-prefetch-url https://download.nvidia.com/XFree86/Linux-x86_64/<version>/NVIDIA-Linux-x86_64-<version>.run
 $ nix hash convert --hash-algo sha256 --to sri <output-of-previous-command>
 ```
+
 Then add your workstation to `modules/workstation/workstations.nix`:
+
 ```nix
 my-workstation = {
   version = "<driver version>"; # Must match the kernel driver exactly
   sha256_64bit = "sha256-...";  # Hash of the NVIDIA .run installer
 };
+
 ```
 Now you can install the NVIDIA drivers via `system-manager`:
+
 ```sh
 $ nix run 'github:numtide/system-manager' -- switch --sudo --flake .#my-workstation
 ```
@@ -191,15 +198,21 @@ Build and run the virtual machine by running the following command:
 ```sh
 $ QEMU_KERNEL_PARAMS=console=ttyS0 nix run .#nixosConfigurations.dummy-robot.config.system.build.vmWithDisko -- -nographic
 ```
+
 After logging in as the `robot` user with the default password (`password`), launch the dummy robot demo: 
+
 ```sh
 [robot@dummy-robot:~]$ ros2 launch dummy_robot_bringup dummy_robot_bringup_launch.py
 ```
+
 On your local machine, open the `dummy-robot` development shell:
+
 ```sh
 $ nix develop .#dummy-robot
 ```
+
 You should then be able to see the ROS topics being published by the virtual machine:
+
 ```sh
 $ ros2 topic list
 /joint_states
@@ -211,7 +224,9 @@ $ ros2 topic list
 /tf
 /tf_static
 ```
+
 You can visualise these topics by launching RViz from the development shell:
+
 ```sh
 $ rviz2 -d modules/inventory/robots/dummy-robot.rviz
 ```
